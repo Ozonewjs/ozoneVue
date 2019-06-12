@@ -98,7 +98,7 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '1111111'
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -133,7 +133,6 @@ export default {
       }
     },
     handleLogin() {
-      console.log("aaaa");
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -144,7 +143,7 @@ export default {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
+          // console.log('error submit!!')
           return false
         }
       })

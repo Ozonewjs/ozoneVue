@@ -7,11 +7,11 @@ module.exports = {
     devServer: {
         open: process.platform === 'darwin',
         host: 'localhost',
-        port: 1234,
+        port: 8080,
         https: false,
         hotOnly: false,
         // See https://github.com/vuejs/vue-cli/blob/dev/docs/cli-service.md#configuring-proxy
-        proxy: null, // string | Object
+        // proxy: null, // string | Object
         before: app => {}
     },
     chainWebpack: config => {
