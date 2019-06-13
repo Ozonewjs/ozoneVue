@@ -16,7 +16,7 @@ export function getInfo(username) {
     params: { username: username }
   })
 }
-//数组为参数是进行
+// 数组为参数是进行
 export function getMenus(roles) {
   return request({
     url: '/user/menus',

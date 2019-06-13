@@ -46,7 +46,7 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.name).then(response => {
-        let data = response.data
+        const data = response.data
         if (!data) {
           reject('Verification failed, please Login again.')
         }
@@ -56,7 +56,7 @@ const actions = {
           reject('getInfo: roles must be a non-null array!')
         }
         commit('SET_ROLES', roles)
-        // commit('SET_NAME', name)
+        commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {
