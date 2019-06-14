@@ -1,15 +1,15 @@
 import { asyncRoutes, constantRoutes } from '@/router'
-import {getMenus} from '@/api/user'
+import { getMenus } from '@/api/user'
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
  * @param route
  */
-function hasPermission(temp,menus) {
+function hasPermission(temp, menus) {
   let checkres = 0
-  menus.forEach( menu =>{
-    if (menu.path == temp.path ) {
-     checkres++
+  menus.forEach(menu => {
+    if (menu.path === temp.path) {
+      checkres++
     }
   })
   // if (route.meta && route.meta.roles) {
@@ -17,9 +17,9 @@ function hasPermission(temp,menus) {
   // } else {
   //   return true
   // }
-  if (checkres>0) {
+  if (checkres > 0) {
     return true
-  }else{
+  } else {
     return false
   }
 }
@@ -30,19 +30,19 @@ function hasPermission(temp,menus) {
  * @param roles
  */
 export function filterAsyncRoutes(routes, menus) {
-    const res = []
-    routes.forEach(route => {
-      // ...展开运算
-      const tmp = { ...route }
-      if (hasPermission(tmp,menus)) {
-        if (tmp.children) {
-          tmp.children = filterAsyncRoutes(tmp.children, menus)
-        }
-        res.push(tmp)
+  const res = []
+  routes.forEach(route => {
+  // ...展开运算
+    const tmp = { ...route }
+    if (hasPermission(tmp, menus)) {
+      if (tmp.children) {
+        tmp.children = filterAsyncRoutes(tmp.children, menus)
       }
-    })
-    return res
-  }
+      res.push(tmp)
+    }
+  })
+  return res
+}
 const state = {
   routes: [],
   addRoutes: []
@@ -60,7 +60,7 @@ const actions = {
     return new Promise(
       (resolve, reject) => {
         getMenus(roles).then(response => {
-          let accessedroutesmenu       
+          let accessedroutesmenu
           if (response.data) {
             accessedroutesmenu = filterAsyncRoutes(asyncRoutes, response.data)
           }
