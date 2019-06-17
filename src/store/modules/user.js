@@ -29,6 +29,7 @@ const actions = {
   login({ commit }, userInfo) {
     // 解构（Destructuring）
     const { username, password } = userInfo
+    // Promise 是一个对象，从它可以获取异步操作的消息。
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response

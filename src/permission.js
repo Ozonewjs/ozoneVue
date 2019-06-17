@@ -9,7 +9,7 @@ import getPageTitle from '@/utils/get-page-title'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login'] // no redirect whitelist
-
+// async 是 ES7 才有的与异步操作有关的关键字
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
@@ -34,6 +34,7 @@ router.beforeEach(async(to, from, next) => {
         try {
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
+          // await: 操作符用于等待一个 Promise 对象, 它只能在异步函数 async function 内部使用。
           const { roles } = await store.dispatch('user/getInfo')
           // generate accessible routes map based on roles
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)

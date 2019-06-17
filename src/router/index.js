@@ -155,7 +155,29 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/info',
+    name: 'system',
+    meta: {
+      title: '系统设置',
+      icon: 'system'
+    },
+    children: [
+      {
+        path: 'info',
+        component: menu1, // Parent router-view
+        name: 'info',
+        meta: { title: '个人信息' },
+      },
+      {
+        path: 'team',
+        component: menu2,
+        meta: { title: '团队设置' }
+      }
+    ]
+  },
   {
     path: 'external-link',
     component: Layout,
