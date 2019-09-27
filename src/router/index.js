@@ -5,9 +5,12 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-import menu1 from '@/views/nested/menu1/index'
-import menu11 from '@/views/nested/menu1/menu1-1'
-import menu2 from '@/views/nested/menu2/index'
+import UserInfo from '@/views/system/userinfo'
+import TeamInfo from '@/views/system/teaminfo'
+import RoleInfo from '@/views/system/roleinfo'
+import MyDaily from '@/views/daily/mydaily'
+import WorkList from '@/views/daily/workList'
+
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -31,6 +34,7 @@ import menu2 from '@/views/nested/menu2/index'
  * constantRoutes
  * a base page that does not have permission requirements
  * all roles can be accessed
+ * 编写路由 router 和路由对应的 view component 的时候一定要确保 两者的 name 是完全一致
  */
 export const constantRoutes = [
   {
@@ -38,13 +42,11 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
   },
-
   {
     path: '/',
     component: Layout,
@@ -53,44 +55,28 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'home' }
+      meta: { title: '首页', icon: 'home', affix: true }
     }]
-  },
-
+  }, 
   {
-    path: '/example',
+    path: '/test',
+    hidden: true,
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
+    redirect: '/dashboard',
+    children: [{
+      path: 'test1',
+      name: 'todolist',
+      component: () => import('@/views/form/index'),
+      // meta: { title: '测试', icon: 'home', affix: false }
+      meta: {  icon: '', affix: false }
+    }]
+  }, 
   {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  }
+    path: '/pdf/download',
+    name: 'pdfdownload',
+    component: () => import('@/components/pdf/download'),
+    hidden: true
+  },
 ]
 
 /**
@@ -99,83 +85,52 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: menu1, // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: menu11,
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: menu2,
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-  {
     path: '/system',
     component: Layout,
     redirect: '/system/info',
     name: 'system',
     meta: {
-      title: '系统设置',
-      icon: 'system'
-    },
+    title: '系统设置', icon: 'system'},
     children: [
       {
         path: 'info',
-        component: menu1, // Parent router-view
-        name: 'info',
-        meta: { title: '个人信息' },
+        component: UserInfo, // Parent router-view
+        name: 'UserInfo',
+        meta: { title: '用户管理'},
       },
       {
         path: 'team',
-        component: menu2,
-        meta: { title: '团队设置' }
+        component: TeamInfo,
+        name: 'TeamInfo',
+        meta: { title: '团队管理'}
+      },
+      {
+        path: 'role',
+        component: RoleInfo,
+        name: 'RoleInfo',
+        meta: { title: '角色管理'}
       }
+    ]
+  },
+  {
+    path: '/daily',
+    component: Layout,
+    redirect: '/daily/mydaily',
+    name: 'daily',
+    meta: {title: '日常管理', icon: 'system'},
+    children: [
+      {
+        path: 'mydaily',
+        component: MyDaily, // Parent router-view
+        name: 'mydaily',
+        meta: { title: '我的工作日清'},
+      },
+      {
+        path: 'worklist',
+        component: WorkList, // Parent router-view
+        name: 'worklist',
+        meta: { title: '工作计划'},
+      },
     ]
   },
   {
@@ -195,7 +150,7 @@ export const asyncRoutes = [
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  // scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
 

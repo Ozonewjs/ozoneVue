@@ -1,35 +1,48 @@
 import request from '@/utils/request'
-import qs from 'qs'
 export function login(data) {
-  console.log(data)
   return request({
-    url: '/user/login',
+    url: '/Login/userLogin',
     method: 'post',
     params: data
   })
 }
 
-export function getInfo(username) {
+export function getInfo(roleid) {
   return request({
-    url: '/user/info',
-    method: 'get',
-    params: { username: username }
+    url: '/RoleManage/queryRoleMenuByRoleId',
+    method: 'post',
+    params: { roleid: roleid }
   })
 }
-// 数组为参数是进行
-export function getMenus(roles) {
+export function getMenus(roleid) {
   return request({
-    url: '/user/menus',
-    method: 'get',
-    params: { roles: roles },
-    paramsSerializer: params => {
-      return qs.stringify(params, { indices: false })
-    }
+    url: '/RoleManage/queryRoleMenuByRoleId',
+    method: 'post',
+    params: { roleid: roleid }
   })
 }
-export function logout() {
+export function queryMenus(params) {
   return request({
-    url: '/user/logout',
-    method: 'post'
+    url: '/RoleManage/QueryMenu',
+    method: 'post',
+    data: params
+  })
+}
+// // 数组为参数是进行
+// export function getMenus(roles) {
+//   return request({
+//     url: '/user/menus',
+//     method: 'get',
+//     params: { roles: roles },
+//     paramsSerializer: params => {
+//       return qs.stringify(params, { indices: false })
+//     }
+//   })
+// }
+export function logout(roleid) {
+  return request({
+    url: '/Login/removeUser',
+    method: 'post',
+    params: { roleid: roleid }
   })
 }

@@ -1,5 +1,49 @@
 import { asyncRoutes, constantRoutes } from '@/router'
 import { getMenus } from '@/api/user'
+
+const state = {
+  routes: [],
+  addRoutes: [],
+  roles: []
+}
+
+const mutations = {
+  SET_ROUTES: (state, routes) => {
+    state.addRoutes = routes
+    state.routes = constantRoutes.concat(routes)
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
+  }
+}
+
+const actions = {
+  generateRoutes({ commit},roleid) {
+    return new Promise((resolve, reject) => {
+        getMenus(roleid).then(response => {
+          let accessedroutesmenu
+          let loginRoles = [];
+          if (response.code === 'S') {
+            accessedroutesmenu = filterAsyncRoutes(asyncRoutes, response.menus)
+            loginRoles.push(response.roleid)
+          }
+          commit('SET_ROLES',loginRoles)
+          commit('SET_ROUTES', accessedroutesmenu)
+          resolve(accessedroutesmenu)
+        }).catch(error => {
+          reject(error)
+        })
+      }
+    )
+  },
+  resetRoles({commit}){
+    return new Promise(resolve => {
+      commit('SET_ROLES',[])
+      resolve()
+    }
+    )
+  },
+}
 /**
  * Use meta.role to determine if the current user has permission
  * @param roles
@@ -42,47 +86,6 @@ export function filterAsyncRoutes(routes, menus) {
     }
   })
   return res
-}
-const state = {
-  routes: [],
-  addRoutes: []
-}
-
-const mutations = {
-  SET_ROUTES: (state, routes) => {
-    state.addRoutes = routes
-    state.routes = constantRoutes.concat(routes)
-  }
-}
-
-const actions = {
-  generateRoutes({ commit }, roles) {
-    return new Promise(
-      (resolve, reject) => {
-        getMenus(roles).then(response => {
-          let accessedroutesmenu
-          if (response.data) {
-            accessedroutesmenu = filterAsyncRoutes(asyncRoutes, response.data)
-          }
-          commit('SET_ROUTES', accessedroutesmenu)
-          resolve(accessedroutesmenu)
-        }).catch(error => {
-          reject(error)
-        })
-      }
-    //   resolve => {
-    //   let accessedRoutes
-    //   if (roles.includes('admin')) {
-    //     // accessedRoutes = asyncRoutes || []
-    //     accessedRoutes = []
-    //   } else {
-    //     accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-    //   }
-    //   commit('SET_ROUTES', accessedRoutes)
-    //   resolve(accessedRoutes)
-    // }
-    )
-  }
 }
 
 export default {

@@ -35,7 +35,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import store from '@/store'
 export default {
   components: {
     Breadcrumb,
@@ -53,6 +53,9 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
+      await this.$store.dispatch('permission/resetRoles')
+      await this.$store.dispatch('tagsView/delAllVisitedViews')
+      await this.$store.dispatch('tagsView/delAllCachedViews')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
@@ -61,7 +64,7 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  height: 50px;
+  height: 70px;
   overflow: hidden;
   position: relative;
   background: #fff;

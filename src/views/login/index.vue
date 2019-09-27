@@ -6,13 +6,13 @@
         <h3 class="title">Login Form</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="userId">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
+          ref="userId"
+          v-model="loginForm.userId"
           placeholder="Username"
           name="username"
           type="text"
@@ -21,14 +21,14 @@
         />
       </el-form-item>
 
-      <el-form-item prop="password">
+      <el-form-item prop="passWord">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
         <el-input
           :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
+          ref="passWord"
+          v-model="loginForm.passWord"
           :type="passwordType"
           placeholder="Password"
           name="password"
@@ -74,12 +74,12 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        userId: '11111',
+        passWord: '222222'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        userId: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        passWord: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
       passwordType: 'password',
@@ -106,11 +106,13 @@ export default {
       })
     },
     handleLogin() {
+      
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+            this.loading = true
+            this.$store.dispatch('user/login', this.loginForm).then(() => {
+            console.log("login redirect"+this.redirect)
+            this.$router.push({ path:  '/' })
             this.loading = false
           }).catch(() => {
             this.loading = false

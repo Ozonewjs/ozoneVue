@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Qs from 'qs'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 // import { getToken } from '@/utils/auth'
@@ -6,9 +7,20 @@ import store from '@/store'
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: 'http://localhost:8080',
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 50000 // request timeout
+  baseURL: '/api',
+  withCredentials: true, // send cookies when cross-domain requests
+  timeout: 50000, // request timeout
+  // transformRequest: [function (data) {
+  //   // 对 data 进行任意转换处理
+  //   data = Qs.stringify(data)
+  //   return data
+  // }],
+  // paramsSerializer: function(params) {
+  //   // return Qs.stringify(params, {arrayFormat: 'repeat' })
+  //   // return Qs.stringify(params, { arrayFormat: 'brackets'  })
+  //   // return Qs.stringify(params, { arrayFormat: 'indices' })
+  //   // return Qs.stringify(params, { indices: false  })
+  // },
 })
 
 // request interceptor
@@ -20,13 +32,15 @@ service.interceptors.request.use(
     //   // let each request carry token
     //   // ['X-Token'] is a custom headers key
     //   // please modify it according to the actual situation
-    //   config.headers['X-Token'] = getToken()
+     
+    //   config.headers['Cookie'] = store.getters.token
+    //   config.headers['Content-Type'] = 'application/json;charset=UTF-8'
     // }
     return config
   },
   error => {
     // do something with request error
-    console.log(error) // for debug
+    console.log("service.interceptors.request"+ error) // for debug
     return Promise.reject(error)
   }
 )
@@ -45,30 +59,40 @@ service.interceptors.response.use(
    */
   response => {
     // console.log(response)
-    const res = response.data
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 200) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
+    const headers = response.headers
+    if (headers['content-type'] === 'application/octet-stream') {
+      return response.data
+    }else{
+      const res = response.data
+      // if the custom code is not 20000, it is judged as an error.
+      if (res.code !== 'S') {
+        Message({
+          message: res.message || 'Error',
+          type: 'error',
+          duration: 5 * 1000
         })
+        // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
+        if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+          // to re-login
+          MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+            confirmButtonText: 'Re-Login',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            store.dispatch('user/resetToken').then(() => {
+              location.reload()
+            })
+          })
+        }else if(res.code === "MODIFY_ERROR"){//密码过期
+          Message({
+            message: res.messages,
+          })
+          return res
+        }
+        return Promise.reject(new Error(res.message || 'Error'))
+      } else {
+        return res
       }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
     }
   },
   error => {
