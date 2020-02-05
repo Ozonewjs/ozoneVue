@@ -12,7 +12,7 @@
                 <el-button size="mini" @click="rowInfo('','')" type="primary">新增</el-button>
             </el-row>
         </div>
-        <el-table  :data="tableData"  height="527"  style="width: 100%;" size='small' border v-loading="loading"  default-expand-all>
+        <el-table  :data="tableData"    style="width: 100%;" size='small'  v-loading="loading"  default-expand-all>
             <el-table-column  prop="roleid" label="角色编号"  width="180"></el-table-column>
             <el-table-column  prop="rolename"   label="角色名称"  width="200"></el-table-column>
             <el-table-column  prop="remark" label="角色说明" width="400"></el-table-column>

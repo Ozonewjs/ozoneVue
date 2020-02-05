@@ -38,6 +38,17 @@ import WorkList from '@/views/daily/workList'
  */
 export const constantRoutes = [
   {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -51,12 +62,20 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
+    meta: { title: '首页',icon:'home', affix: true },
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'home', affix: true }
-    }]
+      meta: { title: '首页', affix: true }
+    },
+    {
+      path: '/menus',
+      name: 'Menu',
+      component: () => import('@/views/dashboard/menu'),
+      meta: { title: '菜单管理',  affix: false }
+    },
+  ]
   }, 
   {
     path: '/test',
@@ -89,23 +108,27 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/system/info',
     name: 'system',
-    meta: {
-    title: '系统设置', icon: 'system'},
+    menuid: '070',
+    meta: { title: '系统设置', icon: 'system'},
     children: [
       {
         path: 'info',
+        // path: '/redirect/:path*',
+        menuid: '070010',
         component: UserInfo, // Parent router-view
         name: 'UserInfo',
         meta: { title: '用户管理'},
       },
       {
         path: 'team',
+        menuid: '070020',
         component: TeamInfo,
         name: 'TeamInfo',
         meta: { title: '团队管理'}
       },
       {
         path: 'role',
+        menuid: '070030',
         component: RoleInfo,
         name: 'RoleInfo',
         meta: { title: '角色管理'}
@@ -114,6 +137,7 @@ export const asyncRoutes = [
   },
   {
     path: '/daily',
+    menuid: '010',
     component: Layout,
     redirect: '/daily/mydaily',
     name: 'daily',
@@ -121,15 +145,24 @@ export const asyncRoutes = [
     children: [
       {
         path: 'mydaily',
+        menuid: '010020',
         component: MyDaily, // Parent router-view
         name: 'mydaily',
         meta: { title: '我的工作日清'},
       },
       {
         path: 'worklist',
+        menuid: '010030',
         component: WorkList, // Parent router-view
         name: 'worklist',
         meta: { title: '工作计划'},
+      },
+      {
+        path: 'worklist',
+        menuid: '010050',
+        component: WorkList, // Parent router-view
+        name: 'worklist',
+        meta: { title: '查看工作日清'},
       },
     ]
   },

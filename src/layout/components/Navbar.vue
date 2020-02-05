@@ -1,29 +1,61 @@
 <template>
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
     <breadcrumb class="breadcrumb-container" />
-
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+      <el-dropdown class="avatar-container" trigger="hover">
+        <!-- <div class="avatar-wrapper">
+          <img :src= "personInfo" class="user-avatar">
+          <span>个人信息</span>
           <i class="el-icon-caret-bottom" />
-        </div>
+        </div> -->
+         <a class="avatar-wrapper">
+         <ul class="ul-top">
+            <p style="height:20px;margin:0px;">
+              <img :src= "personInfo" class="user-avatar">
+            </p>
+            <p class="p-text">个人信息</p>
+          </ul>
+         </a>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              Home
-            </el-dropdown-item>
+            <el-dropdown-item>首页</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
+          </a> -->
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">Log Out</span>
+            <span style="display:block;" @click="logout">个人信息</span>
+          </el-dropdown-item>
+          <el-dropdown-item divided>
+            <span style="display:block;" @click="logout">退出登录</span>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
+     <div class="right-menu">
+      <el-dropdown class="avatar-container" trigger="hover">
+        <a class="avatar-wrapper">
+          <ul class="ul-top">
+            <p style="height:20px;margin:0px;">
+              <img :src= "applying" class="user-avatar">
+            </p>
+            <p style="padding:0px;height:5px;margin:0px;font-size:10px;">新增申请</p>
+          </ul>
+          <!-- <i class="el-icon-caret-bottom" /> -->
+        </a>
+        <el-dropdown-menu slot="dropdown" class="user-dropdown">
+          <router-link to="/">
+            <el-dropdown-item>经营贷产品</el-dropdown-item>
+          </router-link>
+          <el-dropdown-item divided>
+            <span style="display:block;" @click="logout">消费贷产品</span>
+          </el-dropdown-item>
+          <el-dropdown-item divided>
+            <span style="display:block;" @click="logout">贷记卡产品</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -46,6 +78,13 @@ export default {
       'sidebar',
       'avatar'
     ])
+  },
+  data(){
+    return{
+       zone: require('@/assets/img/def_header2.jpg'),
+       personInfo: require('@/assets/img/personInfo2.png'),
+       applying: require('@/assets/img/applying.png')
+    }
   },
   methods: {
     toggleSideBar() {
@@ -91,6 +130,7 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
+    text-align: center;
 
     &:focus {
       outline: none;
@@ -115,7 +155,7 @@ export default {
     }
 
     .avatar-container {
-      margin-right: 30px;
+      margin-right: 20px;
 
       .avatar-wrapper {
         margin-top: 5px;
@@ -123,11 +163,15 @@ export default {
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 25px;
+          height: 25px;
+          // border-radius: 6px;
+         
+          
         }
-
+        // .el-row{
+        //   height:10px;
+        // }
         .el-icon-caret-bottom {
           cursor: pointer;
           position: absolute;
@@ -135,7 +179,19 @@ export default {
           top: 25px;
           font-size: 12px;
         }
+
       }
+    }
+    .ul-top{
+      padding:0px;
+      margin:0px;
+      text-align:center;
+    }
+    .p-text{
+     padding:0px;
+     height:5px;
+     margin:0px;
+     font-size:10px;
     }
   }
 }

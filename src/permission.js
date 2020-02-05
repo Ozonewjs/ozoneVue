@@ -11,7 +11,6 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 const whiteList = ['/login'] // no redirect whitelist
 // async 是 ES7 才有的与异步操作有关的关键字
 router.beforeEach(async(to, from, next) => {
-  // console.log("to====="+JSON.stringify(to))
   // start progress bar
   NProgress.start()
   if (to.path === '/login') {
@@ -37,11 +36,12 @@ router.beforeEach(async(to, from, next) => {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       console.log("hasRoles======"+hasRoles)
       if (hasRoles) {
-        if (to.matched.length ===0) {  //如果未匹配到路由
-          next('/login');   //如果上级也未匹配到路由则跳转主页面，如果上级能匹配到则转上级路由
-        } else {
+        // if (to.matched.length ===0) {  //如果未匹配到路由
+        //   next('/login');   //如果上级也未匹配到路由则跳转主页面，如果上级能匹配到则转上级路由
+        // } 
+        // else {
           next();    //如果匹配到正确跳转
-        }
+        // }
       }else {
         try {
           // get user info
@@ -55,12 +55,12 @@ router.beforeEach(async(to, from, next) => {
               sessionStorage.setItem("roleid",roleid)
             }
           } else {
+            // await store.dispatch('tagsView/delAllVisitedViews')
+            // await store.dispatch('tagsView/delAllCachedViews')
             roleid = sessionStorage.getItem("roleid")
-            // this.$store.dispatch('tagsView/delAllViews')
           }
           const accessRoutes = await store.dispatch('permission/generateRoutes',roleid)
           // dynamically add accessible routes
-          console.log("add accessRoutes")
           router.addRoutes(accessRoutes)
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record

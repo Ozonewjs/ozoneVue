@@ -99,6 +99,12 @@ const actions = {
       removeToken()
       resolve()
     })
+  },
+  resetRoleid({ commit }) {
+    return new Promise(resolve => {
+      commit('SET_ROLEID', '')
+      resolve()
+    })
   }
 }
 

@@ -1,34 +1,44 @@
 <template>
 <div style="padding:3px;">
-  <div style="padding:5px;float:right;">
+  <div style="padding:5px;">
      <el-row >
+       <div style="float:right;">
           用户编号：
-          <el-input size="mini" v-model="userid"></el-input>
+          <el-input size="mini" v-model="userid" @keyup.enter.native="queryByUserIdOrName"></el-input>
           用户名称：
           <el-input size="mini" v-model="userName"></el-input>
           <el-button size="mini" @click="queryByUserIdOrName" type="primary">搜索</el-button>
           <el-button size="mini":loading="downloadLoading" @click="handleExcelDownload" type="primary">Excel</el-button>
+       </div>
      </el-row>
-  </div>
-  <el-table :data="tableData" height="532"  border style="width: 100%;">
-    <el-table-column prop="userid" label="用户编号" width="120"> </el-table-column>
-    <el-table-column prop="userName" label="用户名称" width="150"> </el-table-column>
-    <el-table-column prop="teamid" label="所属团队" width="180"  :formatter="show_Formatter"> </el-table-column>
-    <el-table-column prop="roleid" label="用户角色" width="150" > </el-table-column>
-    <el-table-column prop="weixin" label="微信" width="180"> </el-table-column>
-    <el-table-column prop="email" label="邮箱" width="200"> </el-table-column>
-    <el-table-column prop="sex" label="性别" width="120" :formatter="show_Formatter"> </el-table-column>
-    <el-table-column prop="userstatus" label="状态" width="120" :formatter="show_Formatter"> </el-table-column>
-  </el-table>
-  <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[10, 20, 30, 40]"
-      :page-size="100"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="totalcount">
-    </el-pagination>
+ 
+  <el-row :gutter="5" style="margin-top:10px;">
+    <el-col :span="4">
+      <el-tree :data="teamList" :props="defaultProps" :expand-on-click-node="false" :default-expand-all="true" @node-click="handleNodeClick"></el-tree>
+    </el-col>
+    <el-col :span="20">
+      <el-table :data="tableData"  size='small'  style="width: 100%;">
+        <el-table-column prop="userid" label="用户编号" width="100"> </el-table-column>
+        <el-table-column prop="userName" label="用户名称" width="120"> </el-table-column>
+        <el-table-column prop="teamid" label="所属团队" width="120"  :formatter="show_Formatter"> </el-table-column>
+        <el-table-column prop="roleid" label="用户角色" width="120" > </el-table-column>
+        <el-table-column prop="weixin" label="微信" width="180"> </el-table-column>
+        <el-table-column prop="email" label="邮箱" width="200"> </el-table-column>
+        <el-table-column prop="sex" label="性别" width="120" :formatter="show_Formatter"> </el-table-column>
+        <el-table-column prop="userstatus" label="状态" width="120" :formatter="show_Formatter"> </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-sizes="[10, 20, 30, 40]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalcount">
+      </el-pagination>
+    </el-col>
+  </el-row>
+   </div>
 </div>
 </template>
 <script>
@@ -47,8 +57,13 @@ export default {
             userName: '',
             searchform: {},
             teamList: [],
+            teamList2: [],
             roleList: [],
             downloadLoading: false,
+            defaultProps: {
+              children: 'children',
+              label: 'teamName'
+            },
             params:{
               keylist: [{comparetype:"eq",key:"userstatus",type:"",valuelist:["1","2"]}],
               operation:"total",
@@ -64,7 +79,6 @@ export default {
         }
     },
     created(){
-      console.log("created=========userinfo")
       getUserList(this.params).then((response) => {
         if (response.code == 'S') {
           this.tableData = response.resultlist,
@@ -78,9 +92,10 @@ export default {
       });
       getTeamList(this.params2).then((response) => {
         if (response.code == 'S') {
-          this.teamList = response.resultlist
+          this.teamList2 = response.resultlist
+          this.teamList = this.arrayToTreedata(this.searchFromArray('0'))
         } else {
-          Message.error('Has Error')
+          Message.error(response.message)
         }
       }).catch((err) => {
         Message.error('Has Error')
@@ -114,12 +129,13 @@ export default {
       },
       handleCurrentChange(val){
         this.params.page = val ;
+        console.log(JSON.stringify(this.params))
         getUserList(this.params).then((response) => {
           if (response.code == 'S') {
           this.tableData = response.resultlist,
           this.totalcount = response.totalcount
         } else {
-          Message.error('Has Error')
+          Message.error(response.messages)
         }
         }).catch((err) => {
           Message.error('Has Error')
@@ -141,6 +157,7 @@ export default {
           if (response.code == 'S') {
           this.tableData = response.resultlist,
           this.totalcount = response.totalcount
+          this.params.keylist=[]
         } else {
           Message.error('Has Error')
         }
@@ -158,7 +175,7 @@ export default {
             return renderValue(row[columntype],'SystemPublic.Status');
           } 
           else if (columntype == 'teamid'){
-            return renderTeamValue1(this.teamList,row[columntype]);
+            return renderTeamValue1(this.teamList2,row[columntype]);
           } 
           else if (columntype == 'roleid'){
             return renderRoleValue(this.roleList,row[columntype]);
@@ -183,7 +200,6 @@ export default {
       },
       formatJson(filterVal, jsonData) {
         return jsonData.map(v => filterVal.map(j => {
-          
           if (j === 'teamid') {
             return renderTeamValue1(this.teamList,v[j]);
           }else if(j === 'sex'){
@@ -196,13 +212,60 @@ export default {
             return v[j]
           }
         }))
-      }
+      },
+      arrayToTreedata(data){
+            var res = []
+            data.forEach(element => {
+              let dep = {}
+              dep = Object.assign({},dep,element)
+              if (element!=null) {
+                  var child = this.searchFromArray(element.teamid)
+                  if (child!=null && child.length>0) {
+                    dep.children = this.arrayToTreedata(child)
+                  }
+              }
+              res.push(dep)
+            });
+            return res
+        },
+        searchFromArray(key){
+          var res = []
+          this.teamList2.forEach(element => {
+            if(element.upTeamId == key){
+              res.push(element) 
+            }
+          })
+          return res
+        },
+        handleNodeClick(data){
+          let searchParams={}
+          this.params.keylist=[]
+          this.params.page="1"
+          this.currentPage = 1
+          for(var key in this.params){
+            searchParams[key] = this.params[key];
+          }
+          searchParams.keylist.push({comparetype:"eq",key:"teamid",type:"",valuelist:[data.teamid]}) 
+          getUserList(searchParams).then((response) => {
+            if (response.code == 'S') {
+              this.tableData = response.resultlist
+              this.totalcount = response.totalcount
+              console.log(this.currentPage)
+            } else {
+              Message.error(response.message)
+            }
+
+          }).catch((err) => {
+            Message.error('Has Error')
+          }); 
+          
+        }
   }
 }
 </script>
 <style>
 .el-input{
-  width: 180px
+  width: 100px
 }
 /* .el-table td{
   padding:7px;

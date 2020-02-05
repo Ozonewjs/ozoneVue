@@ -38,10 +38,12 @@ export default {
           this.todolist = response.todolist
           this.loading = false
         }else{
+            this.loading = false
             Message.error(response.messages)
         }
         }).catch(error => {
-        Message.error(error)
+          this.loading = false
+          Message.error(error)
     })
   }
 }

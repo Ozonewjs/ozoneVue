@@ -52,7 +52,7 @@ const actions = {
 function hasPermission(temp, menus) {
   let checkres = 0
   menus.forEach(menu => {
-    if (menu.path === temp.path) {
+    if (menu.menuid === temp.menuid) {
       checkres++
     }
   })

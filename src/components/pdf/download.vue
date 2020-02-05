@@ -1,6 +1,6 @@
 <template>
 <div v-loading.fullscreen.lock= "fullscreenLoading" element-loading-text=" 加载PDF...." id="pdf">
-    <iframe id="pdf" :srcdoc= "pdfinfo" style="width:100%;height:2000px;border:0px;margin-top:20px;margin-right:200px;margin-bottom:30px;"></iframe>
+    <iframe id="pdf" :srcdoc= "pdfinfo" style="width:100%;height:2000px;border:0px;margin-top:20px;margin-right:200px;margin-bottom:10px;" scrolling="auto"></iframe>
 </div>
 </template>
 <script>
@@ -36,7 +36,6 @@ export default {
                 var mywindow = window.open('', '', 'height=2000px;,width=1000px');
                 mywindow.document.write(this.pdfinfo)
                 mywindow.print();
-                // window.print()
             })
             }, 3000)
         })
